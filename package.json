@@ -1,0 +1,25 @@
+{
+  "name": "imagify",
+  "version": "0.0.1",
+  "description": "A browserify transform for inlining svg and images in your code.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/enki-com/imagify.git"
+  },
+  "keywords": [
+    "svg",
+    "transform",
+    "stream",
+    "browserify",
+    "inline",
+    "image",
+    "base64"
+  ],
+  "author": "Mathieu Dutour <mathieu@dutour.me>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "through": "~2.3.4"
+  }
+}
