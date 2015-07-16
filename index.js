@@ -1,47 +1,33 @@
-var through = require('through2');
+var path = require ('path');
+var t2 = require ('through2');
+var fs = require ('fs');
 
-module.exports = function (file) {
-  var i = -1;
-  function head(type) {
-    i++;
-    return i === 0 ? 'module.exports = "data:image/'+type+';base64,' : '';
-  }
-  function tail() {
-    return '"';
-  }
-  function isImg(file) {
-    return (/\.((lit)?gif|png|jpg|jpeg)$/).exec(file);
-  }
-  function isSvg(file) {
-    return (/\.((lit)?svg)$/).exec(file);
-  }
-  function transforSvg(svg) {
-    return 'module.exports = "'+svg+'";';
-  }
+var imgExtension = ['.png', '.jpg', '.jpeg', '.gif'];
 
-  if (isImg(file)) {
-    var type = isImg(file)[1];
-    return through(
-      function (buf, enc, next) {
-        this.push(head(type));
-        this.push(buf.toString('base64'));
-        next();
-      },
-      function (end) {
-        this.push(tail());
-        end();
-      }
-    );
-  } else if (isSvg(file)) {
-    return through(
-      function (buf, enc, next) {
-        this.push(transforSvg(buf.toString()));
-        next();
-      },
-      function (end) {
-        end();
-      }
-    );
+module.exports = function(file) {
+  var extension = path.extname(file);
+  if(imgExtension.indexOf(extension) !== -1) {
+    return t2.obj(function(data, enc, cb) {
+      var self = this;
+      fs.readFile(file, function(err, data) {
+        var out = ["img = 'data:image/png;base64,"];
+        out.push(new Buffer(data).toString('base64'));
+        out.push("';module.exports = img;");
+        self.push(new Buffer(out.join('')));
+        cb();
+      });
+    });
+  } else if (extension === 'svg') {
+    return t2.obj(function(data, enc, cb) {
+      var self = this;
+      fs.readFile(file, function(err, data) {
+        var out = ["img = '"];
+        out.push(data);
+        out.push("';module.exports = img;");
+        self.push(new Buffer(out.join('')));
+        cb();
+      });
+    });
   }
-  return through();
+  return t2();
 };
