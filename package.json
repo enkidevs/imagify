@@ -1,6 +1,6 @@
 {
   "name": "imagify",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A browserify transform for inlining svg and images in your code.",
   "main": "index.js",
   "repository": {
@@ -20,6 +20,6 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "through": "~2.3.4"
+    "through2": "~2.0.0"
   }
 }
