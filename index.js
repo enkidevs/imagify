@@ -10,6 +10,7 @@ module.exports = function(file) {
     return t2.obj(function(data, enc, cb) {
       var self = this;
       fs.readFile(file, function(err, data) {
+        if (err) { cb(err); }
         var out = ["var img = 'data:image/png;base64,"];
         out.push(new Buffer(data).toString('base64'));
         out.push("';module.exports = img;");
@@ -17,22 +18,18 @@ module.exports = function(file) {
         cb();
       });
     });
-  } else if (extension === 'svg') {
-    var buffer = '';
+  } else if (extension === '.svg') {
     return t2.obj(function(data, enc, cb) {
-      buffer += data.toString();
-      cb();
-    }, function(cb) {
-
-			var jst = buffer.toString();
-			var compiled = ['module.exports = '];
-
-			compiled.push(JSON.stringify(jst));
-			compiled.push(';\n');
-
-			this.push(compiled.join(''));
-			cb();
-		});
+      var self = this;
+      fs.readFile(file, 'utf8', function(err, data) {
+        if (err) { cb(err); }
+        var out = ["module.exports = '"];
+        out.push(data.replace('\n', ''));
+        out.push("';");
+        self.push(new Buffer(out.join('')));
+        cb();
+      });
+    });
   }
   return t2();
 };
